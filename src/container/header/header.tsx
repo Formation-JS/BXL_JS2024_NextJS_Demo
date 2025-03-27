@@ -1,4 +1,5 @@
 import Image from "next/image";
+import NavLink from "../nav-link/nav-link";
 
 export default function Header() {
 
@@ -14,6 +15,7 @@ export default function Header() {
             <span className="text-2xl self-center hidden sm:block">
                 Demo NextJS
             </span>
+            <NavLink />
         </header> 
     )
 }
