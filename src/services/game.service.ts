@@ -1,4 +1,4 @@
-import type { Game, GameDetail, GameRequestData } from "@/@types/game";
+import type { Game, GameData, GameDetail, GameRequestData } from "@/@types/game";
 import axios from "axios";
 import { unstable_cache as cache } from 'next/cache';
 
@@ -94,3 +94,11 @@ export const fetchDetailGame = cache(async (gameId: number): Promise<GameDetail 
     };
 
 }, undefined, { tags: ['games'] });
+
+export const insertGame = async (data: GameData) : Promise<number> => {
+    const result = await apiRequester.post('games', {
+        ...data,
+        isDeleted: false
+    });
+    return result.data.id
+}

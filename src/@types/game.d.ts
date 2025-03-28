@@ -15,3 +15,9 @@ export type Game = {
 export type GameDetail = Game & {
     desc: string|null
 };
+
+export type GameData = {
+    name: string;
+    genres: string;
+    desc: string|null
+};

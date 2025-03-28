@@ -1,5 +1,7 @@
 'use server';
 
+import { insertGame } from "@/services/game.service";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -49,11 +51,13 @@ export async function actionNewGame(state: GameFormState, data: FormData): Promi
         };
     }
 
-    //TODO Envois vers la DB ou vers l'API Backend
+    //! Envois vers la DB ou vers l'API Backend
+    const gameId = await insertGame(formFields2.data);
 
     //! Traitement de fin d'action (2 choix)
     //? Redirection
-    redirect('/game');
+    revalidateTag('games');
+    redirect('/game/detail/'+ gameId);
     
     //? Reset du formulaire (pour enchainer les ajouts)
     return {
