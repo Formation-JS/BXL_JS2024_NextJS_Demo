@@ -31,3 +31,40 @@ export const fetchGames = cache(async (page = 1, perPage = 3): Promise<Game[]> =
         genres: elem.genres.split(',').map(g => g.trim())
     }));
 
+}, undefined, { tags: ['games'] });
+
+export const fetchGameCount = cache(async (): Promise<number> => {
+
+    //! Fausse latence... Ne pas faire ça en production (╯°□°）╯︵ ┻━┻
+    await (new Promise((resolve) => setTimeout(resolve, 500)));
+
+    //* Requete pour obtenir le nombre d'element via le header (X-Total-Count)
+    //http://localhost:4002/games?isDeleted=false&_limit=0
+    const result = await apiRequester.get('games', {
+        params: { isDeleted: false, _limit: 0 }
+    });
+
+    // Récuperation de nombre de jeu via le header (FakeAPI) 
+    console.log(result.headers);
+    return parseInt(result.headers["x-total-count"] ?? 0);
+}, undefined, { tags: ['games'] });
+
+export const fetchGameLast = cache(async (): Promise<Game | null> => {
+
+    //! Fausse latence... Ne pas faire ça en production (╯°□°）╯︵ ┻━┻
+    await (new Promise((resolve) => setTimeout(resolve, 2_500)));
+
+    //* Requete pour obtenir le dernier jeu
+    // http://localhost:4002/games?isDeleted=false&_sort=id&_order=desc&_limit=1
+    const result = await apiRequester.get<GameRequestData[]>('games', {
+        params: { isDeleted: false, _sort: 'id', _order: 'desc', _limit: 1 }
+    });
+    const elem = result.data[0];
+
+    // Renvoi du resultat mappé
+    return !elem ? null : {
+        id: elem.id,
+        name: elem.name,
+        genres: elem.genres.split(',').map(g => g.trim())
+    };
+}, undefined, { tags: ['games'] });
