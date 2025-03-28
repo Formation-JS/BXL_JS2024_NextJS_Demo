@@ -11,3 +11,7 @@ export type Game = {
     name: string;
     genres: string[];
 };
+
+export type GameDetail = Game & {
+    desc: string|null
+};

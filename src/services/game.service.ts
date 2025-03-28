@@ -1,4 +1,4 @@
-import type { Game, GameRequestData } from "@/@types/game";
+import type { Game, GameDetail, GameRequestData } from "@/@types/game";
 import axios from "axios";
 import { unstable_cache as cache } from 'next/cache';
 
@@ -67,4 +67,30 @@ export const fetchGameLast = cache(async (): Promise<Game | null> => {
         name: elem.name,
         genres: elem.genres.split(',').map(g => g.trim())
     };
+}, undefined, { tags: ['games'] });
+
+export const fetchDetailGame = cache(async (gameId: number): Promise<GameDetail | null> => {
+
+    //! Fausse latence... Ne pas faire ça en production (╯°□°）╯︵ ┻━┻
+    await (new Promise((resolve) => setTimeout(resolve, 1_000)));
+
+    //* Requete vers l'api (en NextJS, on pourrait aussi être un call DB)
+    // http://localhost:4002/games?isDeleted=false&id=3
+    const result = await apiRequester.get<GameRequestData[]>('/games', {
+        params: { id: gameId }
+    });
+    const elem = result.data[0];
+
+    if(!elem) {
+        return null;
+    }
+
+    // Envoi des données mappées
+    return {
+        id: elem.id,
+        name: elem.name,
+        genres: elem.genres.split(',').map(g => g.trim()),
+        desc: elem.desc
+    };
+
 }, undefined, { tags: ['games'] });
